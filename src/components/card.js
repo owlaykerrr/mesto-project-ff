@@ -1,8 +1,4 @@
-import { openPopup } from "./modal";
-
 const cardTemplate = document.querySelector("#card-template").content;
-const imageCard = document.querySelector(".popup_type_image");
-const imageCaption = imageCard.querySelector(".popup__caption");
 
 
 export function createCard(
@@ -32,15 +28,7 @@ export function createCard(
   return card;
 }
 
-//функция открытия окна картинки 
-export function openImageWindow(name, link) {
-  openPopup(imageCard);
-  imageCaption.textContent = name;
-  imageCard.querySelector(".popup__image").src = link;
-  imageCard
-    .querySelector(".popup__image")
-    .setAttribute("alt", "На фотографии " + name);
-}
+
 
 //функция удаления карточки
 export function deleteCard(event) {

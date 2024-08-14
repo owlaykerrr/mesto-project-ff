@@ -1,6 +1,6 @@
 import "./pages/index.css";
 import "./blocks/popup/popup.css";
-import { isLikeCard, createCard, deleteCard, openImageWindow } from "./components/card.js";
+import { isLikeCard, createCard, deleteCard} from "./components/card.js";
 import { initialCards } from "./components/cards.js";
 import { openPopup } from "./components/modal.js";
 import { closePopupListener } from "./components/modal.js";
@@ -12,6 +12,7 @@ const editButton = document.querySelector(".profile__edit-button");
 const popupAdd = document.querySelector(".popup_type_new-card"); //попапы редактирования, кнопки добавить и картинки
 const profileAddButton = document.querySelector(".profile__add-button");
 const imageCard = document.querySelector(".popup_type_image");
+const imagePopup = imageCard.querySelector(".popup__image")
 const closeButton = document.querySelector(".popup__close"); //главные постоянные попапов
 const popupMain = document.querySelector(".popup");
 const popupButton = document.querySelector(".popup__button");
@@ -23,6 +24,7 @@ const jobInput = formElement.elements.description;
 const formImageAdd = document.forms["new-place"];
 const placeNameInput = formImageAdd.querySelector(".popup__input_type_card-name");
 const linkNameInput = formImageAdd.querySelector(".popup__input_type_url");
+const imageCaption = imageCard.querySelector(".popup__caption");
 
 
 
@@ -82,4 +84,13 @@ function handleFormSubmit(evt) {
   formNamePage.textContent = nameInput.value;
   formJobPage.textContent = jobInput.value;
   closePopup(popupMain);
+}
+
+
+//функция открытия окна картинки 
+export function openImageWindow(name, link) {
+  openPopup(imageCard);
+  imageCaption.textContent = name;
+  imagePopup.src = link;
+  imagePopup.setAttribute("alt", "На фотографии " + name);
 }
