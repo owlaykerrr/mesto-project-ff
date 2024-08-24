@@ -33,6 +33,7 @@ export const closePopupListener = (popupElement) => {
       closePopup(popupElement);
     }
   });
+
 };
 
 
