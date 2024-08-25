@@ -39,22 +39,19 @@ const linkNameInput = formImageAdd.querySelector(".popup__input_type_url");
 const imageCaption = imageCard.querySelector(".popup__caption");
 const deleteButton = document.querySelector(".card__delete-button");
 const avatarButton = document.querySelector(".profile__image");
-
 const avatarPopup = document.querySelector(".popup_type_avatar")
 const avatarForm = document.forms["change-avatar"]
 const avatarInput = avatarForm.querySelector(".popup__input_type_avatar");
 const avatarFormButton = avatarPopup.querySelector('.popup__button');
+let userId;
 
 //вывод карточек с сервера
 Promise.all([getInitialCards(), getUserInfo()])
 .then (([cards, userData]) => {
+    userId = userData._id;
     cards.forEach((card) => {
       const cardElement = createCard(
-        card.name, card.link, card.likes, card._id, userData._id, deleteCard, handLikeClick, openImageWindow);
-        
-        if(card.owner._id !== userData._id) {
-         cardElement.querySelector('.card__delete-button').classList.add('card__delete-button_inactive');
-        }
+        card.name, card.link, card.likes, card._id, card.owner._id, userId, deleteCard, handLikeClick, openImageWindow);
         galleryPlace.prepend(cardElement);
     })
 
@@ -71,7 +68,6 @@ Promise.all([getInitialCards(), getUserInfo()])
 
 editButton.addEventListener("click", () => {
   openPopup(popupEdit);
-  renderLoading(false);
   clearValidation(formElement, validationConfig);
   nameInput.value = formNamePage.textContent;
   jobInput.value  = formJobPage.textContent;
@@ -82,15 +78,14 @@ editButton.addEventListener("click", () => {
 
 profileAddButton.addEventListener("click", () => {
   openPopup(popupAdd);
-  renderLoading(false);
   clearValidation(formImageAdd, validationConfig);
   placeNameInput.value = "";
   linkNameInput.value = "";
 
-  if([placeNameInput === ""]) {
-   formImageAdd.querySelector(validationConfig.submitButtonSelector).classList.add(validationConfig.inactiveButtonClass);
-   formImageAdd.querySelector(validationConfig.submitButtonSelector).disabled = true; 
-  }
+  //  if([placeNameInput === ""]) {
+  //   formImageAdd.querySelector(validationConfig.submitButtonSelector).classList.add(validationConfig.inactiveButtonClass);
+  //   formImageAdd.querySelector(validationConfig.submitButtonSelector).disabled = true; 
+  //  }
 });
 
 
@@ -113,29 +108,35 @@ formImageAdd.addEventListener("submit", addImageSubmitButton);
   renderLoading(true);
   addNewCardPost(placeNameInput, linkNameInput)
   .then((res) => {
-    console.log(res)
+
     const name = placeNameInput.value;
     const link = linkNameInput.value;
     const likes = res.likes;
     const likeCount = res.likes.length;
     const cardId = res._id;
-    const userId = res.owner._id;
-  const cardElement = createCard(
+    const ownerId = res.owner._id;
+    const cardElement = createCard(
     name,
     link,
     likes,
     cardId,
+    ownerId,
     userId,
     deleteCard,
     handLikeClick,
     openImageWindow,
   );
-
   addCard(cardElement);
- 
   formImageAdd.reset();
   closePopup(popupAdd);
    })
+   .catch((err) => {
+    console.log(err);
+   })
+   .finally(() => {
+    renderLoading(false);
+  })
+  
 }
 
 
@@ -155,14 +156,15 @@ function handleFormSubmit(evt) {
   .then((res) => {
     formNamePage.textContent = nameInput.value;
     formJobPage.textContent = jobInput.value;
+    closePopup(popupMain);
   })
   .catch((err) => {
     console.log(err);
   })
   .finally(() => {
-    
+    renderLoading(false);
   });
-  closePopup(popupMain);
+  
 }
 
 
@@ -196,6 +198,7 @@ changeAvatar(avatarInput)
 .then((res) => {
 console.log(res);
 avatarButton.style.backgroundImage = `url(${avatarInput.value})`;
+closePopup(avatarPopup);
 })
 .catch((res) => {
   console.log(res);
@@ -203,7 +206,7 @@ avatarButton.style.backgroundImage = `url(${avatarInput.value})`;
 .finally(() => {
   renderLoading(false);
 })
-closePopup(avatarPopup);
+
 }
 
 //кнопка сабмит формы в аватарке

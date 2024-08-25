@@ -24,6 +24,7 @@ export function createCard(
   link,
   likes,
   cardId,
+  ownerId,
   userId,
   deleteCard,
   handLikeClick,
@@ -46,21 +47,16 @@ export function createCard(
     deleteCard(cardId, cardElement);
   });
 
+  //проверка на мои карточки 
+  if(ownerId !== userId) {
+    cardElement.querySelector('.card__delete-button').classList.add('card__delete-button_inactive');
+   }
   
-
   //ПРОВЕРКА НА ЛАЙК.
   if(likes.find(like => like._id === userId)) {
     likeButton.classList.add("card__like-button_is-active");
   }
 
-
-  // const isLiked = likes.some((item) => {
-  //   item._id === userId; 
-  // });
-
-  // if (isLiked) {
-  //   likeButton.classList.add("card__like-button_is-active");
-  // }
 
   likeButton.addEventListener("click", () => {
     handLikeClick(cardId, likeButton, likeCount);
